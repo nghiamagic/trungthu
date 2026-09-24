@@ -676,36 +676,35 @@ const audioBtn = document.getElementById("audio-btn");
 
 let isPlaying = false;
 
-// Tự phát nhạc khi vào trang
-window.addEventListener("load", () => {
-  bgm.volume = 0.7;
+bgm.volume = 1;
 
-  bgm.play()
-    .then(() => {
-      isPlaying = true;
-      audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-    })
-    .catch(() => {
-      // Trình duyệt chặn autoplay
-      isPlaying = false;
-    });
+// Tự phát khi trang tải
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await bgm.play();
+
+    isPlaying = true;
+    audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+  } catch (error) {
+    console.log("Autoplay bị trình duyệt chặn:", error);
+  }
 });
 
-// Nút bật / tắt nhạc
-audioBtn.addEventListener("click", () => {
-  if (isPlaying) {
+// Nút bật / tắt
+audioBtn.addEventListener("click", async () => {
+  if (bgm.paused) {
+    try {
+      await bgm.play();
+      isPlaying = true;
+      audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
     bgm.pause();
     isPlaying = false;
     audioBtn.innerHTML =
       '<i class="fas fa-music" style="opacity:0.5;"></i>';
-  } else {
-    bgm.play()
-      .then(() => {
-        isPlaying = true;
-        audioBtn.innerHTML =
-          '<i class="fas fa-volume-up"></i>';
-      })
-      .catch(() => {});
   }
 });
 // ANIMATION
