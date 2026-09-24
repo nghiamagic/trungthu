@@ -670,36 +670,44 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeWishCard();
 });
 
-// AUDIO
 const bgm = document.getElementById("bgm");
 const audioBtn = document.getElementById("audio-btn");
 
 let isPlaying = false;
+let firstTouch = true;
 
-bgm.volume = 1;
-
-// Tự phát khi trang tải
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await bgm.play();
-
-    isPlaying = true;
-    audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-  } catch (error) {
-    console.log("Autoplay bị trình duyệt chặn:", error);
-  }
-});
-
-// Nút bật / tắt
-audioBtn.addEventListener("click", async () => {
-  if (bgm.paused) {
-    try {
-      await bgm.play();
+// Hàm bật nhạc
+function playMusic() {
+  bgm.play()
+    .then(() => {
       isPlaying = true;
       audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-    } catch (error) {
-      console.log(error);
-    }
+    })
+    .catch(() => {});
+}
+
+// Chạm màn hình lần đầu → bật nhạc
+document.addEventListener("touchstart", () => {
+  if (firstTouch) {
+    firstTouch = false;
+    playMusic();
+  }
+}, { once: true });
+
+// Máy tính: click lần đầu → bật nhạc
+document.addEventListener("click", () => {
+  if (firstTouch) {
+    firstTouch = false;
+    playMusic();
+  }
+}, { once: true });
+
+// Nút bật / tắt nhạc
+audioBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  if (bgm.paused) {
+    playMusic();
   } else {
     bgm.pause();
     isPlaying = false;
