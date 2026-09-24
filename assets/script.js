@@ -673,22 +673,54 @@ window.addEventListener("keydown", (e) => {
 // AUDIO
 const bgm = document.getElementById("bgm");
 const audioBtn = document.getElementById("audio-btn");
+
 let isPlaying = false;
 
-audioBtn.addEventListener("click", () => {
+function playMusic() {
+  bgm.play()
+    .then(() => {
+      isPlaying = true;
+      audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    })
+    .catch(() => {});
+}
+
+function pauseMusic() {
+  bgm.pause();
+  isPlaying = false;
+  audioBtn.innerHTML =
+    '<i class="fas fa-music" style="opacity:0.5;"></i>';
+}
+
+// Nút nhạc
+audioBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
   if (isPlaying) {
-    bgm.pause();
-    audioBtn.innerHTML = '<i class="fas fa-music" style="opacity:0.5;"></i>';
+    pauseMusic();
   } else {
-    bgm
-      .play()
-      .then(() => {
-        audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-      })
-      .catch(() => {});
+    playMusic();
   }
-  isPlaying = !isPlaying;
 });
+
+// Thử tự phát khi vừa mở trang
+window.addEventListener("load", () => {
+  playMusic();
+});
+
+// Nếu trình duyệt chặn autoplay,
+// lần chạm đầu tiên sẽ bật nhạc
+document.addEventListener("click", () => {
+  if (!isPlaying) {
+    playMusic();
+  }
+}, { once: true });
+
+document.addEventListener("touchstart", () => {
+  if (!isPlaying) {
+    playMusic();
+  }
+}, { once: true });
 
 // ANIMATION
 const clock = new THREE.Clock();
