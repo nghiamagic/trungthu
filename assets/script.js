@@ -676,52 +676,38 @@ const audioBtn = document.getElementById("audio-btn");
 
 let isPlaying = false;
 
-function playMusic() {
+// Tự phát nhạc khi vào trang
+window.addEventListener("load", () => {
+  bgm.volume = 0.7;
+
   bgm.play()
     .then(() => {
       isPlaying = true;
       audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
     })
-    .catch(() => {});
-}
+    .catch(() => {
+      // Trình duyệt chặn autoplay
+      isPlaying = false;
+    });
+});
 
-function pauseMusic() {
-  bgm.pause();
-  isPlaying = false;
-  audioBtn.innerHTML =
-    '<i class="fas fa-music" style="opacity:0.5;"></i>';
-}
-
-// Nút nhạc
-audioBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-
+// Nút bật / tắt nhạc
+audioBtn.addEventListener("click", () => {
   if (isPlaying) {
-    pauseMusic();
+    bgm.pause();
+    isPlaying = false;
+    audioBtn.innerHTML =
+      '<i class="fas fa-music" style="opacity:0.5;"></i>';
   } else {
-    playMusic();
+    bgm.play()
+      .then(() => {
+        isPlaying = true;
+        audioBtn.innerHTML =
+          '<i class="fas fa-volume-up"></i>';
+      })
+      .catch(() => {});
   }
 });
-
-// Thử tự phát khi vừa mở trang
-window.addEventListener("load", () => {
-  playMusic();
-});
-
-// Nếu trình duyệt chặn autoplay,
-// lần chạm đầu tiên sẽ bật nhạc
-document.addEventListener("click", () => {
-  if (!isPlaying) {
-    playMusic();
-  }
-}, { once: true });
-
-document.addEventListener("touchstart", () => {
-  if (!isPlaying) {
-    playMusic();
-  }
-}, { once: true });
-
 // ANIMATION
 const clock = new THREE.Clock();
 
